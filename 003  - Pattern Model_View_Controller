@@ -1,0 +1,52 @@
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View xmlns:macros="sap.fe.macros" controllerName="zov.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core" 
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+         <VBox class="sapUiTinyMargin">
+            <Label text="Model padrão da view (origem: controller)"/>
+            <Text text="{/usuario/nome}"/>
+
+            <Text text="--------------------------------------------------"/>
+
+            <Label text="Model 'dados' da view (origem: controller)"/>
+            <Text text="{dados>/usuario/nome}"/>
+
+            <Text text="--------------------------------------------------"/>
+      </VBox>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+],
+
+    /** 
+    * @param {typeof sap.ui.core.mvc.Controller} Controller 
+    */
+
+function (Controller) {
+    "use strict";
+
+    return Controller.extend("zov.controller.View1", {
+
+        //model padrão da view
+        onInit: function () {                                     // funcao gerada ao inicio da aplicacao
+            var oView = this.getView();                           // pega a View1
+            var oModel = new sap.ui.model.json.JSONModel();       // cria um json model
+            oModel.setData({"usuario": {"nome": "Rafael"}});      // insere dados no json
+            oView.setModel(oModel);                               // conecta o jason a view
+        }
+    });
+});
+
+"-----------------------------------------------------------------------------------------------------

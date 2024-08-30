@@ -1,0 +1,114 @@
+"para acessar o parametro temos de definir isto no controller mas devemos tambem passar o index na view
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View xmlns:macros="sap.fe.macros" controllerName="zov.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core" 
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+         <VBox id="Box" class="sapUiTinyMargin">
+
+           <Label id="labe1" text="One Way: Model ← View"/>
+           <Input id="input1" value="{oneway>/usuario/nome}"/>
+           <Text id="text1" text="{oneway>/usuario/nome}"/>
+           <Button id="button1" text="One Way - Adicionar Ponto Final" press="onTestOneWay"/>
+
+           <Text id="textstring1" text="----------------------------------------------"/>
+
+           <Label id="labe2" text="Two Way: Model ← → View"/>
+           <Input id="input2" value="{twoway>/usuario/nome}"/>
+           <Text id="text2" text="{twoway>/usuario/nome}"/>
+           <Button id="button2" text="Two Way - Adicionar Ponto Final" press="onTestTwoWay"/>
+
+           <Text id="textstring2" text="----------------------------------------------"/>
+
+           <Label id="labe3" text="One Time: Model → View"/>
+           <Input id="input3" value="{onetime>/usuario/nome}"/>
+           <Text id="text3" text="{onetime>/usuario/nome}"/>
+           <Button id="button3" text="One Time - Adicionar Ponto Final" press="onTestOneTime"/>
+
+           <Text id="textstring3" text="----------------------------------------------"/>
+
+        </VBox>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+],
+
+/** 
+* @param {typeof sap.ui.core.mvc.Controller} Controller 
+*/
+
+function (Controller) {
+    "use strict";
+
+    return Controller.extend("zov.controller.View1", {
+
+        onInit: function () {
+
+            var oView = this.getView(); // pega a view
+
+            var oModel1 = new sap.ui.model.json.JSONModel(); // cria uma instancia de um model
+            oModel1.setData({"usuario": {"nome": "José"}});  // insere dados json no objeto model
+            oModel1.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay); // define o modo de binding para one way
+            oView.setModel(oModel1, "oneway"); // procura na view a referência e insere o conteúdo do model
+
+            var oModel2 = new sap.ui.model.json.JSONModel();
+            oModel2.setData({"usuario": {"nome": "Rafael"}});
+            oModel2.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+            oView.setModel(oModel2, "twoway")
+
+            var oModel3 = new sap.ui.model.json.JSONModel();
+            oModel3.setData({"usuario": {"nome": "Pedro"}});
+            oModel3.setDefaultBindingMode(sap.ui.model.BindingMode.OneTime);
+            oView.setModel(oModel3, "onetime")
+           
+        },
+
+        //A funcao invocada pelo botao altera o model
+        onTestOneWay: function(){
+
+            var oView  = this.getView(); // pega a view
+            var oModel = oView.getModel("oneway"); // objeto recebe o model
+            var oData  = oModel.getData(); // variavel recebe o nome
+
+            oData.usuario.nome += ".";  //incrementa a string com um ponto final
+            oModel.setData(oData);
+
+        },
+
+        onTestTwoWay: function(){
+
+            var oView  = this.getView(); // pega a view
+            var oModel = oView.getModel("twoway"); // objeto recebe o model
+            var oData  = oModel.getData(); // variavel recebe o nome
+
+            oData.usuario.nome += ".";  //incrementa a string com um ponto final
+            oModel.setData(oData);
+
+        },
+
+        onTestOneTime: function(){
+
+            var oView  = this.getView(); // pega a view
+            var oModel = oView.getModel("onetime"); // objeto recebe o model
+            var oData  = oModel.getData(); // variavel recebe o nome
+
+            oData.usuario.nome += ".";  //incrementa a string com um ponto final
+            oModel.setData(oData);
+
+        }
+    });
+});
+
+"-----------------------------------------------------------------------------------------------------

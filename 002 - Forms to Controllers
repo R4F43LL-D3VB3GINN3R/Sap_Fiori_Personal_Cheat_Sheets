@@ -1,0 +1,123 @@
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="zov.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+
+        <f:Form id="FormChange354" editable="true">
+            <f:title>
+                <core:Title text="Calculadora" />
+            </f:title>
+            <f:layout>
+                <f:ResponsiveGridLayout
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+                <f:FormContainer>
+                    <f:formElements>
+                        <f:FormElement label="1º Bimestre">
+                            <f:fields>
+                                <Input value="" id="b1"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="2º Bimestre">
+                            <f:fields>
+                                <Input value="" id="b2"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="3º Bimestre">
+                            <f:fields>
+                                <Input value="" id="b3"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="4º Bimestre">
+                            <f:fields>
+                                <Input value="" id="b4"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="Resultado">
+                            <f:fields>
+                                <Input value="" id="resultado" editable="false"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement label="">
+                            <f:fields>
+                                <Button text="Calcular" press="onCalcular"/>
+                            </f:fields>
+                        </f:FormElement>
+                    </f:formElements>
+                </f:FormContainer>
+            </f:formContainers>
+        </f:Form>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/m/MessageToast"
+],
+    /**
+     * @param {typeof sap.ui.core.mvc.Controller} Controller
+     */
+    function (Controller,MessageToast) {
+        "use strict";
+
+        return Controller.extend("zov.controller.View1", {
+            onInit: function () {
+                //alert("onInit");
+            },
+
+            onBeforeRendering: function(){
+                //alert("onBeforeRendering");
+            },
+
+            onAfterRendering: function(){
+                //alert("onAfterRendering");
+            },
+
+            onExit: function(){
+                //alert("onExit");
+            },
+
+            onCalcular: function(){
+                var oView = this.getView();
+                var iB1 = parseInt(oView.byId("b1").getValue());
+                var iB2 = parseInt(oView.byId("b2").getValue());
+                var iB3 = parseInt(oView.byId("b3").getValue());
+                var iB4 = parseInt(oView.byId("b4").getValue());
+                var fResultado = 0;
+                
+                fResultado = ( iB1 + iB2 + iB3 + iB4) / 4;
+
+                oView.byId("resultado").setValue(fResultado);
+
+                MessageToast.show("Resultado = "+fResultado);
+
+                // MessageToast
+                // sap.m.MessageToast
+                
+                //oView.destroy();
+            }
+        });
+    });

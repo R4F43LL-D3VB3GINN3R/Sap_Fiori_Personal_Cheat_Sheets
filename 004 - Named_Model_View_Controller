@@ -41,7 +41,7 @@ function (Controller) {
 
     return Controller.extend("zov.controller.View1", {
 
-        //model padrão da view
+        //model padrão da view com nome
         onInit: function () {
             var oView = this.getView();
             var oModel = new sap.ui.model.json.JSONModel();

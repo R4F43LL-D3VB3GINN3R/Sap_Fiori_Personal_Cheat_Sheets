@@ -1,3 +1,6 @@
+"para acessar os dados da model padrão, podemos criar um arquivo json diretamente no controller e depois...
+"...inseri-lo na view que apenas espera as informações serem enviadas.
+
 "-----------------------------------------------------------------------------------------------------
                                               VIEW
 "-----------------------------------------------------------------------------------------------------

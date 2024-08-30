@@ -12,13 +12,11 @@
     xmlns="sap.m">
     <Page id="page" title="{i18n>title}">
          <VBox class="sapUiTinyMargin">
-            <Label text="Model padrão da view (origem: controller)"/>
-            <Text text="{/usuario/nome}"/>
 
             <Text text="--------------------------------------------------"/>
 
-            <Label text="Model 'dados' da view (origem: controller)"/>
-            <Text text="{dados>/usuario/nome}"/>
+             <Label text="Model padrão da view (origem: controller)"/>
+             <Text text="{/usuario/nome}"/>
 
             <Text text="--------------------------------------------------"/>
       </VBox>

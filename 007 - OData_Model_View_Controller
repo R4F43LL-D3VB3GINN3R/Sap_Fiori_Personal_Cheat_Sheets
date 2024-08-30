@@ -1,0 +1,59 @@
+"o serviço odata é inserido no manifest na criação do projeto, tudo que se tem de fazer é...
+"referenciá-lo na view e depois chamá-lo no controller com as instruções corretas
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View xmlns:macros="sap.fe.macros" controllerName="zov.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core" 
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+         <VBox class="sapUiTinyMargin">
+
+            <Text text="--------------------------------------------------"/>
+    
+                <Label text="Model Padrão do Serviço (origem manifest)" />
+                <List headerText="Ordens" items="{ path: '/OVCabSet' }" >
+                    <StandardListItem title="Ordem {OrdemId}" description="{CriadoPor}"/>
+                </List>
+
+            <Text text="--------------------------------------------------"/>
+
+            <Button text="Testar Models" press="onTestModels"/>
+
+      </VBox>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+],
+
+    /** 
+    * @param {typeof sap.ui.core.mvc.Controller} Controller 
+    */
+
+function (Controller) {
+    "use strict";
+
+    return Controller.extend("zov.controller.View1", {
+
+        onInit: function () {
+        },
+         //model do serviço
+        onTestModels: function(){
+            var oModel = this.getOwnerComponent().getModel(); //Cria um objeto do tipo Model
+            oModel.read("/OVCabSet");                         //Lê os dados da Entidade no objeto    
+        }
+    });
+});
+
+
+"-----------------------------------------------------------------------------------------------------

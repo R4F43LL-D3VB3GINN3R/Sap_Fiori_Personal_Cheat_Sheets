@@ -19,6 +19,7 @@
              <Text text="{/usuario/nome}"/>
 
             <Text text="--------------------------------------------------"/>
+
       </VBox>
     </Page>
 </mvc:View>

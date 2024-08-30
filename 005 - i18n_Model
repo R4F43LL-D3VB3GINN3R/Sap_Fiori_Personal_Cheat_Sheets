@@ -1,0 +1,29 @@
+"por pré-definicao, o model i18n já está inserido no manifest.json
+"neste caso, não precisa-mos usar o controller para buscar referências.
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View xmlns:macros="sap.fe.macros" controllerName="zov.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core" 
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+         <VBox class="sapUiTinyMargin">
+
+            <Text text="--------------------------------------------------"/>
+
+                <Label text="Model i18n - chave title (origem: manifest)"/>
+                <Text text="{i18n>title}"/>
+
+            <Text text="--------------------------------------------------"/>
+
+            <Button text="Testar Models" press="onTestModels"/>
+
+      </VBox>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------

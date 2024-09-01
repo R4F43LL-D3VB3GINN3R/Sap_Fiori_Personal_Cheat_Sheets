@@ -1,0 +1,291 @@
+"para acessar rotas, temos de inseri-las ao manifest.
+"depois disso, na view chamar um método através de um element button
+"no controller relacionado a view, chamamos o método para redirecionar para a rota declarada ao manifest.
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW 1
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View xmlns:macros="sap.fe.macros" controllerName="zov.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core" 
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+         <VBox id="Box" class="sapUiTinyMargin" alignItems="Center">
+
+            <Button id="button1" text="Novo Cliente" press="onNewCustomer"/>
+            <Button id="button2" text="Modificar Cliente" press="onEditCustomer"/>
+
+        </VBox>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                         CUSTOMERFORMVIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="zov.controller.CustomerFormView"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:core="sap.ui.core" 
+    xmlns:t="sap.ui.table"
+    xmlns="sap.m">
+    <Page id="page2" title="Formulário de Cliente" showNavButton="true" navButtonPress="onNavBack">
+         <VBox id="Box" class="sapUiTinyMargin" alignItems="Center">
+
+            <Button id="button3" text="Voltar" press="onView1"/>
+
+        </VBox>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                         CONTROLLER VIEW 1
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+],
+
+/** 
+* @param {typeof sap.ui.core.mvc.Controller} Controller 
+*/
+
+function (Controller) {
+    "use strict";
+
+    return Controller.extend("zov.controller.View1", {
+
+        onInit: function () {
+        },
+
+        onNewCustomer: function () {
+            var r = sap.ui.core.UIComponent.getRouterFor(this);
+            r.navTo("RouteCustomerNew");
+        },
+
+        onEditCustomer: function () {
+            var r = sap.ui.core.UIComponent.getRouterFor(this);
+            r.navTo("RouteCustomerEdit", {CustomerId:1});
+        }
+    });
+});
+
+"-----------------------------------------------------------------------------------------------------
+                                    CONTROLLER CUSTOMERFORMVIEW
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+],
+
+/** 
+* @param {typeof sap.ui.core.mvc.Controller} Controller 
+*/
+
+function (Controller) {
+    "use strict";
+
+    return Controller.extend("zov.controller.CustomerFormView", {
+
+        onInit: function () {
+
+            var oRouter = sap.ui.core.UIComponent.getRouterFor(this); //Instancia objeto de rota
+            
+            //Liga a rota ao objeto através dos métodos implementados abaixo
+            oRouter.getRoute("RouteCustomerNew").attachMatched(this._onRouteMatchedNew,this); 
+            oRouter.getRoute("RouteCustomerEdit").attachMatched(this._onRouteMatchedNew,this);
+
+        },
+
+        onView1: function() {
+            var r = sap.ui.core.UIComponent.getRouterFor(this);
+            r.navTo("RouteView1");
+        },
+
+        onNavBack: function() {
+
+            const ohistory = sap.ui.core.routing.History.getInstance();
+            const sPreviousHash = oHistory.getPreviousHash();
+
+            if (sPreviousHash !== undefined) {
+                window.history.go(-1);
+            } else {
+                var r = sap.ui.core.UIComponent.getRouterFor(this);
+                r.navTo("RouteView1");
+            }
+        },
+
+        _onRouteMatchedNew: function(oEvent) {
+            alert("Modo de Criação do Cliente");
+        },
+
+        _onRouteMatchedEdit: function(oEvent) {
+
+            //Pega o parametro da url
+            var that = this;
+            var oArgs = oEvent.getParameter("arguments");
+            var SCustomerId = oArgs.CustomerId;
+
+            alert("Modo de Edição do Cliente");
+
+        }
+    });
+});
+
+"-----------------------------------------------------------------------------------------------------
+                                         MANIFEST
+"-----------------------------------------------------------------------------------------------------
+
+{
+  "_version": "1.59.0",
+  "sap.app": {
+    "id": "zov",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.14.4",
+      "toolsId": "4f6d4a32-64b5-4f84-921b-63cd683d9b97"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZOV_SRV/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "usuarios": {
+        "uri": "model/Usuarios.json",
+        "type": "JSON"
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.127.1",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {},
+        "sap.suite.ui.generic.template": {},
+        "sap.ui.comp": {},
+        "sap.ui.generic.app": {},
+        "sap.ui.table": {},
+        "sap.ushell": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zov.i18n.i18n"
+        }
+      },
+      "usuarios": {
+        "type": "sap.ui.model.json.JSONModel",
+        "dataSource": "usuarios"
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "zov.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false
+      },
+      "routes": [
+        {
+          "name": "RouteView1",
+          "pattern": ":?query:",
+          "target": [
+            "TargetView1"
+          ]
+        },
+        {
+          "name": "RouteCustomerNew",
+          "pattern": "customer/new",
+          "target": [
+            "TargetCustomerForm"
+          ]
+        },
+        {
+          "name": "RouteCustomerEdit",
+          "pattern": "customer/{CustomerId}/edit",
+          "target": [
+            "TargetCustomerForm"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetView1": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "View1",
+          "viewName": "View1"
+        },
+        "TargetCustomerForm": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "CustomerFormView",
+          "viewName": "CustomerFormView"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "zov.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  }
+}
+
+"-----------------------------------------------------------------------------------------------------

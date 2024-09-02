@@ -1,0 +1,121 @@
+"inserir dados numa tabela transparente através de uma requisicao post
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="zsbx.controller.CandidatoCadastrar"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Page id="page3" title="{i18n>title}">
+        <f:Form id="FormChange354" editable="true">
+            <f:title>
+                <core:Title id="core1" text="Cadastro de Candidatos" />
+            </f:title>
+            <f:layout>
+                <f:ResponsiveGridLayout
+                    id="laygrid1"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+                <f:FormContainer id="formgrid1">
+                    <f:formElements>
+                        <f:FormElement id="fel1" label="Nome">
+                            <f:fields>
+                                <Input value="" id="in_nome"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement id="fel6" label="">
+                            <f:fields>
+                                <Button id="bt1" text="Cadastrar" press="onCadastrar"/>
+                            </f:fields>
+                        </f:FormElement>
+                    </f:formElements>
+                </f:FormContainer>
+            </f:formContainers>
+        </f:Form>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/odata/v2/ODataModel" // Importa o ODataModel
+],
+
+/** 
+* @param {typeof sap.ui.core.mvc.Controller} Controller 
+* @param {typeof sap.ui.model.odata.v2.ODataModel} ODataModel 
+*/
+
+function (Controller, ODataModel) {
+    "use strict";
+
+    return Controller.extend("zsbx.controller.CandidatoCadastrar", {
+
+        onInit: function() {
+
+            // Cria uma instância do modelo OData
+            var oModel = new ODataModel("/sap/opu/odata/sap/ZSBX_SRV/");
+            this.getView().setModel(oModel);
+            
+        },
+
+        onCadastrar: function() {
+
+            var oView = this.getView();
+
+            // Obtém o valor do input com o id "in_nome"
+            var sName = oView.byId("in_nome").getValue();
+
+            // Cria o objeto de request
+            var oRequest = {
+                "IdCandidato": 0,
+                "IdEmployee": 0,
+                "Nome": sName,
+                "Estado": "0",
+                "Data": "/Date(0)/",
+                "AlteradoPor": "Nome"
+            };
+
+            // Obtém o modelo OData da view
+            var oModel = oView.getModel();
+
+            // Define o caminho da entidade (CandidatoSet)
+            var sPath = "/candidatoSet";
+
+            // Envia a requisição POST
+            oModel.create(sPath, oRequest, {
+                success: function(oData) {
+                    // Tratamento de sucesso (pode exibir uma mensagem de sucesso)
+                    sap.m.MessageToast.show("Candidato cadastrado com sucesso!");
+                },
+                error: function(oError) {
+                    // Tratamento de erro (pode exibir uma mensagem de erro)
+                    sap.m.MessageToast.show("Erro ao cadastrar o candidato.");
+                }
+            });
+        }
+
+    });
+});
+
+
+"-----------------------------------------------------------------------------------------------------

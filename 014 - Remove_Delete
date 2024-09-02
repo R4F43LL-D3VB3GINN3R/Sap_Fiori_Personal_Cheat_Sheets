@@ -1,0 +1,111 @@
+"remoção de dados na base de dados do sap usando fiori
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="zsbx.controller.CandidatoDeletar"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Page id="page3" title="{i18n>title}">
+        <f:Form id="FormChange354" editable="true">
+            <f:title>
+                <core:Title id="core1" text="Remoção de Candidatos" />
+            </f:title>
+            <f:layout>
+                <f:ResponsiveGridLayout
+                    id="laygrid1"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false"/>
+            </f:layout>
+            <f:formContainers>
+                <f:FormContainer id="formgrid1">
+                    <f:formElements>
+                        <f:FormElement id="fel1" label="Id do Candidato">
+                            <f:fields>
+                                <Input value="" id="in_id"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement id="fel6" label="">
+                            <f:fields>
+                                <Button id="bt1" text="Deletar" press="onDeletar"/>
+                            </f:fields>
+                        </f:FormElement>
+                    </f:formElements>
+                </f:FormContainer>
+            </f:formContainers>
+        </f:Form>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/odata/v2/ODataModel" // importa o datamodel 
+],
+
+/** 
+* @param {typeof sap.ui.core.mvc.Controller} Controller 
+* @param {typeof sap.ui.model.odata.v2.ODataModel} ODataModel 
+*/
+
+function (Controller, ODataModel) {
+    "use strict";
+
+    return Controller.extend("zsbx.controller.CandidatoDeletar", {
+
+        onInit: function() {
+
+            // cria uma instancia do odata e liga a view ao model
+            var oModel = new ODataModel("/sap/opu/odata/sap/ZSBX_SRV/");
+            this.getView().setModel(oModel);
+
+        },
+
+        onDeletar: function() {
+
+            // pega a view
+            var oView = this.getView();
+
+            // pega o valor do campo
+            var sId = oView.byId("in_id").getValue();
+
+            // puxa o modelo o data da view
+            var oModel = oView.getModel();
+
+            // define o uri da entidade
+            var sPath = "/candidatoSet(" + sId + ")";
+
+            // envio da requisição DELETE
+            oModel.remove(sPath, {
+                success: function(oData) {
+                    // Mensagem de sucesso
+                    sap.m.MessageToast.show("Candidato removido com sucesso!");
+                },
+                error: function(oError) {
+                    // Mensagem de erro
+                    sap.m.MessageToast.show("Erro ao remover o candidato.");
+                }
+            });
+        }
+
+    });
+});
+
+"-----------------------------------------------------------------------------------------------------

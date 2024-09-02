@@ -1,0 +1,126 @@
+"edicao de uma tabela transparente por fioro.
+"além do método update, o método get entity deve estar implementado em abap.
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="zsbx.controller.CandidatoEditar"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Page id="page3" title="{i18n>title}">
+        <f:Form id="FormChange354" editable="true">
+            <f:title>
+                <core:Title id="core1" text="Edição de um Candidato" />
+            </f:title>
+            <f:layout>
+                <f:ResponsiveGridLayout
+                    id="laygrid1"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false" />
+            </f:layout>
+            <f:formContainers>
+                <f:FormContainer id="formgrid1">
+                    <f:formElements>
+                        <f:FormElement id="fel1" label="Id do Candidato">
+                            <f:fields>
+                                <Input value="" id="in_id"/>
+                            </f:fields>
+                        </f:FormElement>
+                         <f:FormElement id="fel2" label="Nome">
+                            <f:fields>
+                                <Input value="" id="in_nome"/>
+                            </f:fields>
+                        </f:FormElement>
+                         <f:FormElement id="fel3" label="Estado">
+                            <f:fields>
+                                <Input value="" id="in_estado"/>
+                            </f:fields>
+                        </f:FormElement>
+                        <f:FormElement id="fel6" label="">
+                            <f:fields>
+                                <Button id="bt1" text="Alterar" press="onEditar"/>
+                            </f:fields>
+                        </f:FormElement>
+                    </f:formElements>
+                </f:FormContainer>
+            </f:formContainers>
+        </f:Form>
+    </Page>
+</mvc:View>
+
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/odata/v2/ODataModel"
+],
+
+/** 
+* @param {typeof sap.ui.core.mvc.Controller} Controller 
+* @param {typeof sap.ui.model.odata.v2.ODataModel} ODataModel
+*/
+
+function (Controller, ODataModel) {
+    "use strict";
+
+    return Controller.extend("zsbx.controller.CandidatoEditar", {
+
+        onInit: function() {
+            var oModel = new ODataModel("/sap/opu/odata/sap/ZSBX_SRV/");
+            this.getView().setModel(oModel);
+        },
+
+        onEditar: function() {
+            
+            // pega a view
+            var oView = this.getView();
+
+            // recebe os valores do form
+            var sId     = parseInt(oView.byId("in_id").getValue(), 10); // Converte o ID para inteiro
+            var sName   = oView.byId("in_nome").getValue();
+            var sEstado = oView.byId("in_estado").getValue();
+
+            // cria o objeto da request
+            var oRequest = {
+                "Nome"        : sName,
+                "Estado"      : sEstado,
+                "AlteradoPor" : "nome"
+            }
+
+            // obtem o modelo odata da view
+            var oModel = oView.getModel();
+
+            // define o caminho da entidade concatenando o ID
+            var sPath = "/candidatoSet(" + sId + ")";
+
+            // enviando a requisicao put
+            oModel.update(sPath, oRequest, {
+                success: function(oData) {
+                    sap.m.MessageToast.show("Candidato atualizado com sucesso!");
+                },
+                error: function(oError) {
+                    sap.m.MessageToast.show("Erro ao atualizar o candidato.");
+                }
+            });
+        }
+    });
+});
+
+"-----------------------------------------------------------------------------------------------------

@@ -1,0 +1,59 @@
+"inserir dados numa tabela transparente através de uma requisicao post
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="zsbx.controller.CandidatoListar"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns:t="sap.ui.table"
+    xmlns="sap.m">
+    <Page id="page2" title="{i18n>title}">
+       <t:Table id="table1"
+            rows="{/candidatoSet}"
+            visibleRowCount="10"
+            threshold="10"
+            class="sapUiTinyMargin"
+            selectionMode="MultiToggle">
+            <t:toolbar>
+                <OverflowToolbar id="ovflow1">
+                    <Title id="title" text="Candidatos"></Title>
+                </OverflowToolbar>
+            </t:toolbar>
+            <t:columns> 
+                <t:Column id="col1" width="2rem" sortProperty="CandidatoId">
+                    <Label id="lb1" text="ID" />
+                    <t:template>
+                        <Text id="txt1" text="{IdCandidato}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+                <t:Column id="col2" width="2rem" sortProperty="Employee_Id" filterProperty="Employee_Id" autoResizable="true">
+                    <Label id="lb2" text="ID Emp" />
+                    <t:template>
+                        <Text id="txt2" text="{IdEmployee}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+                <t:Column id="col3" width="5rem" sortProperty="Nome" filterProperty="Nome" autoResizable="true">
+                    <Label id="lb3" text="Nome" />
+                    <t:template>
+                        <Text id="txt3" text="{Nome}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+                <t:Column id="col4" width="2rem" sortProperty="Estado" filterProperty="Estado" autoResizable="true">
+                    <Label id="lb4" text="Estado" />
+                    <t:template>
+                        <Text id="txt4" text="{Estado}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+                <t:Column id="col5" width="10rem" sortProperty="Data" filterProperty="Data" autoResizable="true">
+                    <Label id="lb5" text="Data" />
+                    <t:template>
+                        <Text id="txt5" text="{Data}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+            </t:columns>
+        </t:Table>
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------

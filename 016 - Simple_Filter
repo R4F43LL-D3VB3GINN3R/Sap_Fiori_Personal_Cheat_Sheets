@@ -1,0 +1,123 @@
+"edicao de uma tabela transparente por fioro.
+"além do método update, o método get entity deve estar implementado em abap.
+
+"-----------------------------------------------------------------------------------------------------
+                                              VIEW
+"-----------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="zsbx.controller.CandidatoPesquisar"
+    xmlns:mvc="sap.ui.core.mvc" 
+    displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns:t="sap.ui.table"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns="sap.m">
+    
+    <Page id="page" title="Pesquisa de Candidato">
+
+        <fb:FilterBar id="filterBar1" reset="onFilterReset" search="onFilterSearch">
+            <fb:filterItems>
+                <fb:FilterItem name="IdCandidato" label="ID do Candidato">
+                    <fb:control>
+                        <Input id="in_id" value="{filter>/IdCandidato}"/>
+                    </fb:control>
+                </fb:FilterItem>
+            </fb:filterItems>
+        </fb:FilterBar>
+
+        <t:Table id="table1"
+            rows="{/candidatoSet}"
+            selectionMode="MultiToggle"
+            class="sapUiSmallMargin"
+            rowMode="Fixed"
+            threshold="5"
+            visibleRowCount="5"
+            enableBusyIndicator="true">
+            <t:toolbar>
+                <OverflowToolbar>
+                    <Title id="title" text="Candidatos"></Title>
+                </OverflowToolbar>
+            </t:toolbar>
+            <t:columns>
+                <t:Column width="40px" sortProperty="IdCandidato">
+                    <Label text="ID" />
+                    <t:template>
+                        <Text text="{IdCandidato}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+                <t:Column width="80px" sortProperty="Nome">
+                    <Label text="Nome" />
+                    <t:template>
+                        <Text text="{Nome}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+            </t:columns>
+        </t:Table>
+
+    </Page>
+</mvc:View>
+
+"-----------------------------------------------------------------------------------------------------
+                                            CONTROLLER
+"-----------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/m/MessageToast",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter",
+    "sap/ui/model/odata/v2/ODataModel"  // Adiciona a importação do ODataModel
+], function (Controller, MessageToast, Filter, FilterOperator, Sorter, ODataModel) {
+    "use strict";
+
+    return Controller.extend("zsbx.controller.CandidatoPesquisar", {
+
+        onInit: function () {
+            var oModel = new ODataModel("/sap/opu/odata/sap/ZSBX_SRV/");
+            this.getView().setModel(oModel);
+        },
+
+        onFilterSearch: function() {
+            var oView = this.getView();
+
+            // Obtém o valor do campo de entrada e o converte para inteiro
+            var sId = parseInt(oView.byId("in_id").getValue(), 10);
+
+            // Obtém o modelo OData da view
+            var oModel = oView.getModel();
+
+            // Define o caminho da entidade concatenando o ID
+            var sPath = "/candidatoSet(" + sId + ")";
+
+            // Enviando a requisição READ
+            oModel.read(sPath, {
+                success: function(oData) {
+                    // Obtém a referência da tabela
+                    var oTable = oView.byId("table1");
+                    
+                    // Cria um novo modelo JSON com os dados retornados
+                    var oResultModel = new sap.ui.model.json.JSONModel();
+                    oResultModel.setData({candidatos: [oData]});  // Envolvendo os dados em um array
+
+                    // Define o modelo JSON na tabela
+                    oTable.setModel(oResultModel);
+
+                    // Define o caminho de binding da tabela para o array de candidatos
+                    oTable.bindRows("/candidatos");
+
+                    // Exibe uma mensagem de sucesso
+                    MessageToast.show("Ok!");
+                },
+                error: function(oError) {
+                    MessageToast.show("No.");
+                }
+            });
+
+        }
+
+    });
+});
+
+
+"-----------------------------------------------------------------------------------------------------

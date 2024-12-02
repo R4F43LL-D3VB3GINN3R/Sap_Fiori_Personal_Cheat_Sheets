@@ -1,0 +1,292 @@
+"---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<mvc:View controllerName="sbx.pt.newproject.controller.New_View" 
+xmlns:mvc="sap.ui.core.mvc" 
+displayBlock="true" 
+xmlns="sap.m"
+xmlns:t="sap.ui.table">
+    <Page id="page" 
+    title="Test"
+    titleAlignment="Center">
+        <content> 
+        <VBox direction="Column" 
+        backgroundDesign="Solid"
+        width="auto"
+        class="sapUiSmallMarginTop">
+            <VBox backgroundDesign="Solid" 
+                  alignItems="Center"
+                  alignContent="Center"
+                  justifyContent="SpaceAround"
+                  direction="Row"
+                  class="sapUiSmallMarginTop"> 
+                  <Label text="Id" />
+                  <Label text="Field1" />
+                  <Label text="Field2" />
+            </VBox>
+            <VBox backgroundDesign="Solid" 
+                  alignItems="Center"
+                  alignContent="Center"
+                  justifyContent="SpaceAround"
+                  direction="Row"
+                  > 
+                  <Input id="in_id"/>
+                  <Input id="in_field1"/>
+                  <Input id="in_field2"/>
+            </VBox>
+             <t:Table id="table1"
+            rows="{/ZDD_NEW}"
+            visibleRowCount="5"
+            threshold="3"
+            class="sapUiTinyMargin"
+            selectionMode="MultiToggle"
+            width="auto">
+            <t:toolbar>
+                <OverflowToolbar>
+                    <Title id="title" text="Tabela"></Title>
+                </OverflowToolbar>
+            </t:toolbar>
+            <t:columns>
+                <t:Column width="15%" sortProperty="Id" hAlign="Center">
+                    <Label text="id" />
+                    <t:template>
+                        <Text text="{id}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+                <t:Column width="15%" sortProperty="Field1" filterProperty="Field1" autoResizable="true" hAlign="Center">
+                    <Label text="field1" />
+                    <t:template>
+                        <Text text="{field1}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+                <t:Column width="15%" sortProperty="Field2" filterProperty="Field2" autoResizable="true" hAlign="Center">
+                    <Label text="field2" />
+                    <t:template>
+                        <Text text="{field2}" wrapping="false" />
+                    </t:template>
+                </t:Column>
+            </t:columns>
+        </t:Table>  
+        <VBox direction="Row"
+                justifyContent="Center"
+                alignItems="Center"
+                alignContent="Center"
+                width="100%">
+            <Button width="150px" text="Create" class="sapUiLargeMarginBegin sapUiSmallMarginEnd sapUiLargeMarginBottom sapUiSmallMarginTop" press="on_create"/>
+            <Button width="150px" text="Read"   class="sapUiLargeMarginBegin sapUiSmallMarginEnd sapUiLargeMarginBottom sapUiSmallMarginTop" press="on_read"/>
+            <Button width="150px" text="Update" class="sapUiLargeMarginBegin sapUiSmallMarginEnd sapUiLargeMarginBottom sapUiSmallMarginTop" press="on_update"/>
+            <Button width="150px" text="Delete" class="sapUiLargeMarginBegin sapUiSmallMarginEnd sapUiLargeMarginBottom sapUiSmallMarginTop" press="on_delete"/>
+        </VBox> 
+        </VBox>
+        </content>
+    </Page>
+</mvc:View>
+
+"---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/odata/v2/ODataModel"
+
+],
+
+/** 
+* @param {typeof sap.ui.core.mvc.Controller} Controller 
+* @param {typeof sap.ui.model.odata.v2.ODataModel} ODataModel 
+*/
+
+function (Controller, ODataModel) {
+    "use strict";
+
+    // Referência a view
+    return Controller.extend("sbx.pt.newproject.controller.New_View", {
+        
+        onInit: function() {
+            // Cria uma instância do modelo OData
+            // A Referência ao fim do caminho deve ser feita em relacão ao serviço e não a entidade
+            var oModel = new ODataModel("/sap/opu/odata/sap/ZDD_NEW_CDS/");
+            this.getView().setModel(oModel,'worklistView');
+        },
+
+        //Funcao do botão
+        on_create: function() {
+
+            var oView = this.getView();
+
+            //Obtém os valores dos campos
+            var lv_in1 = oView.byId("in_id").getValue();
+            var lv_in2 = oView.byId("in_field1").getValue();
+            var lv_in3 = oView.byId("in_field2").getValue();
+
+            // Cria o objeto de request
+            var oRequest = {
+                    "id": 0,
+                    "field1": lv_in2,
+                    "field2": lv_in3,
+            };
+
+            // Obtém o modelo OData da view
+            var oModel = oView.getModel();
+
+            // Define o caminho da entidade (ZDD_NEW)
+            var sPath = "/ZDD_NEW";
+
+            // Envia a requisição POST
+            oModel.create(sPath, oRequest, {
+                success: function(oData) {
+                    // Tratamento de sucesso (pode exibir uma mensagem de sucesso)
+                    sap.m.MessageToast.show("Dados Inseridos");
+                },
+                error: function(oError) {
+                    // Tratamento de erro (pode exibir uma mensagem de erro)
+                    sap.m.MessageToast.show("Erro ao inserir dados.");
+                }
+
+            });
+        
+        }, 
+
+        on_read: function() {
+
+            var oView = this.getView();
+
+            //Obtém os valores dos campos
+            var lv_in1 = oView.byId("in_id").getValue();
+
+            // Obtém o modelo OData da view
+            var oModel = oView.getModel();
+
+            //se o id nao for enviado 
+            if (lv_in1 === "" ) {
+
+                // Define o caminho da entidade, incluindo o ID do registro
+                var sPath = "/ZDD_NEW"; // Assumindo que 'id' seja uma chave primária.
+
+                // Faz a requisição OData para ler todos os registros
+                oModel.read(sPath, {
+                    success: function(oData) {
+                        // Cria um novo modelo JSON com os registros retornados
+                        var oTableModel = new sap.ui.model.json.JSONModel();
+
+                        // Se oData.results existir, usar resultados
+                        if (oData.results) {
+                            oTableModel.setData({ ZDD_NEW: oData.results });
+                        } else {
+                            oTableModel.setData({ ZDD_NEW: [oData] });
+                        }
+                        
+                        // Obtém a tabela pela view
+                        var oTable = oView.byId("table1");
+
+                        // Define o modelo JSON na tabela
+                        oTable.setModel(oTableModel);
+
+                        // Define o caminho de binding da tabela para o array de registros
+                        oTable.bindRows("/ZDD_NEW");
+
+                        sap.m.MessageToast.show("Dados carregados com sucesso.");
+                    },
+                    error: function(oError) {
+                        sap.m.MessageToast.show("Erro ao carregar os dados.");
+                    }
+                });
+
+            } else {
+
+                // Define o caminho da entidade, incluindo o ID do registro
+                var sPath = "/ZDD_NEW(" + lv_in1 + ")"; // Assumindo que 'id' seja uma chave primária.
+
+                // Faz a requisição OData para ler o registro
+                oModel.read(sPath, {
+
+                    success: function(oData) {
+                        // Cria um novo modelo JSON apenas com o registro retornado
+                        var oTableModel = new sap.ui.model.json.JSONModel();
+                        oTableModel.setData({
+                            ZDD_NEW: [oData] // Coloca o objeto retornado em um array
+                        });
+
+                        // Define o novo modelo na tabela
+                        oView.byId("table1").setModel(oTableModel);
+                        sap.m.MessageToast.show("Dados carregados com sucesso.");
+                    },
+                    error: function(oError) {
+                        sap.m.MessageToast.show("Erro ao carregar os dados.");
+                    }
+                    
+                });
+
+            }   
+
+        },
+
+        on_update: function() {
+
+            var oView = this.getView();
+
+            ///Obtém os valores dos campos
+            var lv_in1 = oView.byId("in_id").getValue();
+            var lv_in2 = oView.byId("in_field1").getValue();
+            var lv_in3 = oView.byId("in_field2").getValue();
+
+            // Obtém o modelo OData da view
+            var oModel = oView.getModel();
+
+            // Cria o objeto de request
+            var oRequest = {
+                "field1": lv_in2,
+                "field2": lv_in3,
+            };
+
+            //se o id nao for enviado 
+            if (lv_in1 === "" ) {
+
+                // Tratamento de erro (pode exibir uma mensagem de erro)
+                sap.m.MessageToast.show("Erro ao atualizar os dados.");
+                return;
+            } else  {
+
+                // Define o caminho da entidade, incluindo o ID do registro
+                var sPath = "/ZDD_NEW(" + lv_in1 + ")"; // Assumindo que 'id' seja uma chave primária.
+
+                oModel.update(sPath, oRequest, {
+                    success: function(oData) {
+                        sap.m.MessageToast.show("Dados atualizados com sucesso.");
+                    },
+                    error: function(oError) {
+                        sap.m.MessageToast.show("Erro ao atualizar os dados. Verifique o ID.");
+                    }
+                });
+
+                }
+
+            },
+
+            on_delete: function () {
+
+                var oView = this.getView();
+
+                //Obtém os valores dos campos
+                var lv_in1 = oView.byId("in_id").getValue();
+
+                // Obtém o modelo OData da view
+                var oModel = oView.getModel();
+
+                // Define o caminho da entidade, incluindo o ID do registro
+                var sPath = "/ZDD_NEW(" + lv_in1 + ")"; // Assumindo que 'id' seja uma chave primária.
+
+                oModel.remove(sPath, {
+                    success: function (oData) {
+                        sap.m.MessageToast.show("Dados removidos com sucesso.");
+                    },
+                    error: function (oError) {
+                        sap.m.MessageToast.show("Erro ao remover os dados. Verifique o ID.");
+                    }
+                });           
+            
+            },
+
+        });
+
+});
+
+"---------------------------------------------------------------------------------------------------------------------------------------------------------------

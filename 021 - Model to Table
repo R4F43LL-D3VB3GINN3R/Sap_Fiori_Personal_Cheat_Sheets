@@ -1,0 +1,61 @@
+<mvc:View controllerName="sbx.test.project1.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" 
+    displayBlock="true"
+    xmlns="sap.m">
+    <Page id="page" title="Teste">
+        <Table items="{localModel>/}">
+            <columns>
+                <Column hAlign="Center" 
+                         >
+                    <header  >
+                        <Text text="Produto"/>
+                    </header>
+                </Column>
+                <Column hAlign="Center">
+                    <header>
+                        <Label text="Data"/>
+                    </header>
+                </Column>
+            </columns>
+             <items>
+                <ColumnListItem>
+                    <cells>
+                        <Text text="{localModel>Ebeln/}"/>
+                        <Text text="{localModel>Aedat/}"/>
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table> 
+    </Page>
+</mvc:View>
+
+"---------------------------------------------------------------------------
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageBox"
+], function (Controller, JSONModel, MessageBox) {
+    "use strict";
+
+    return Controller.extend("sbx.test.project1.controller.View1", {
+        onInit: function () {
+
+            var oView = this.getView();
+            var oServiceModel = this.getOwnerComponent().getModel(); 
+            var oJSONModel = new JSONModel();
+            var sPath = "/ORDERSSet";
+
+            oServiceModel.read(sPath, {
+                success: function (oData) {
+                    oJSONModel.setData(oData.results); 
+                    oView.setModel(oJSONModel, "localModel"); 
+                },
+                error: function (oError) {
+                    MessageBox.error("Erro ao carregar os dados do serviço.");
+                    console.error("Erro:", oError);
+                }
+            });
+        }
+    });
+});

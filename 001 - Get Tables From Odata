@@ -6,7 +6,7 @@
         <Button text="Hello World" press="onPress"/>
 
         <VBox class="sapUiTinyMargin">
-            <Label text="Id do Cliente"/  >
+            <Label text="Id do Cliente"/   >
             <Input />
         </VBox>
 
